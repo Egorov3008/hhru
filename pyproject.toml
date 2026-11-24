@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hh-smart-hunter"
+version = "0.1.0"
+description = "Умная автоматизация поиска работы на hh.ru: дедупликация вакансий, LLM-скоринг, сопроводительные письма, отклики через x-cli, human-in-the-loop в Telegram."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "owner" }]
+
+dependencies = [
+    "aiogram>=3.13,<4",
+    "apscheduler>=3.10,<4",
+    "aiosqlite>=0.20",
+    "sqlalchemy>=2.0.30",
+    "alembic>=1.13",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.4",
+    "PyYAML>=6.0",
+    "openai>=1.40",
+]
+
+[project.optional-dependencies]
+# DATABASE_URL=postgresql+asyncpg://... — переключение без правки кода
+postgres = ["asyncpg>=0.29"]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.23",
+    "greenlet>=3.0",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "types-PyYAML",
+]
+
+[project.scripts]
+hh-sh = "src.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "ASYNC", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+plugins = []

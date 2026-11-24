@@ -1,0 +1,29 @@
+# docker compose up -d
+#
+# Контейнер не содержит браузер: x-cli и его управляемые сессии живут на хосте
+# (`./_xcli` подключается read-only) — сервису хватает CLI-команд поверх него.
+#
+# Локальный старт на реальном режиме:
+#   1) cp .env.example .env и заполнить токены; HHSH_HH__MOCK=false
+#   2) HHSH_DB__URL=sqlite+aiosqlite:////app/runtime/hh-smart-hunter.db — volume `runtime` уже смонтирован
+#   3) положить x-cli в ./_xcli/x-cli (и его данные сессии рядом) либо указать другой путь
+services:
+  hunter:
+    build: .
+    container_name: hh-smart-hunter
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      # SQLite БД + сохранённые досье к интервью
+      - ./runtime:/app/runtime
+      # Правки фильтров/резюме подхватываются без пересборки образа
+      - ./config:/app/config:ro
+      - ./data:/app/data:ro
+      # Бинарь x-cli + его сессии (смонтируйте свои пути)
+      - ./_xcli:/opt/xcli:ro
+    command: ["python", "-m", "src.main"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sqlite3,pathlib;pathlib.Path('/app/runtime').exists()"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
