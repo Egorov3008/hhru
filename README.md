@@ -71,3 +71,29 @@ python -m src.app check     # проверка контейнера (docker comp
 | `.env` (HHSH_*) | окружение: БД, LLM, Telegram, x-cli, интервалы планировщика |
 | `config/filters.yaml` | поисковые запросы, пороги, стоп-слова, автоподнятие |
 | `data/resume.md` | резюме — источник для скоринга и писем |
+
+## Шаг 2 — hh-agent и адаптер
+
+hh-agent — FastAPI-демон на хосте с живым Chrome (сессия hh.ru). Отдаёт
+`POST /call` → JSON-список карточек. hh_adapter (VPS) — aiohttp-клиент к нему.
+
+**Запуск hh-agent (хост, порт 10087):**
+
+```bash
+cd tools/hh-agent
+uvicorn server:app --host 0.0.0.0 --port 10087
+```
+
+**Проверка живого агента:**
+
+```bash
+curl -s localhost:10087/call \
+  -H 'content-type: application/json' \
+  -d '{"cmd":"search","query":"python","area":"1","limit":5,"page":0}'
+```
+
+**Обновить golden-фикстуры (markup hh.ru поменялся):**
+
+```bash
+.venv/bin/python tools/update_fixtures.py --save
+```
