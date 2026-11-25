@@ -60,14 +60,14 @@ class TelegramSettings(BaseModel):
 class HHAdapterSettings(BaseModel):
     # true — адаптер отдаёт реалистичные тестовые данные; запуск без hh.ru
     mock: bool = True
-    cli_bin: str = "x-cli"
-    # Имя управляемой браузерной сессии внутри x-cli
-    profile: str = "default"
+    # hh-agent (демон-парсер на хосте с живым Chrome): базовый URL,
+    # например "http://127.0.0.1:10087" либо ssh-туннель на него
+    agent_endpoint: str = "http://127.0.0.1:10087"
+    # Имя webbridge-сессии (группа вкладок) для hh.ru
+    session: str = "hhru"
     command_timeout_seconds: float = 90.0
-    # x-cli управляет одним браузером — больше 2 параллельных кликов не безопасно
+    # Параллельных обращений к агенту — не больше двух (один браузер)
     max_concurrency: int = 2
-    # Дополнительные общие аргументы (например, --config /path/to/cfg)
-    cli_extra_args: list[str] = Field(default_factory=list)
 
 
 class SchedulerSettings(BaseModel):

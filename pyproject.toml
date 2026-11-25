@@ -21,6 +21,10 @@ dependencies = [
     "pydantic-settings>=2.4",
     "PyYAML>=6.0",
     "openai>=1.40",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "aiohttp>=3.9",
+    "selectolax>=0.3.21",
 ]
 
 [project.optional-dependencies]
@@ -50,11 +54,16 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 110
 target-version = "py312"
-src = ["src", "tests"]
+src = ["src", "tests", "tools"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "ASYNC", "SIM"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# hh-agent живёт отдельно от src/ и парсит живой HTML: имя пакета с дефисом,
+# sys.path-вставка перед импортом — на это и смотрит E402
+"tools/**" = ["N999", "E402"]
 
 [tool.mypy]
 python_version = "3.12"

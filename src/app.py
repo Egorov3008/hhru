@@ -80,7 +80,7 @@ async def check() -> int:
     else:
         problems.append("HHSH_TELEGRAM__BOT_TOKEN / HHSH_TELEGRAM__CHAT_ID не заданы")
 
-    print(f"[info] hh-адаптер: {'MOCK' if settings.hh.mock else 'x-cli: ' + settings.hh.cli_bin}"
+    print(f"[info] hh-адаптер: {'MOCK' if settings.hh.mock else 'hh-agent: ' + settings.hh.agent_endpoint}"
           f" (timeout={settings.hh.command_timeout_seconds}s, conc={settings.hh.max_concurrency})")
 
     # Доступ к БД: реально открываем соединение

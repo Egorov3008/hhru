@@ -1,19 +1,32 @@
-"""Общие фикстуры: in-memory SQLite с живой ORM-схемой."""
+"""Общие фикстуры и sys.path-вставки для тестов.
+
+tools/hh-agent — пакет с дефисом: обычный импорт невозможен,
+поэтому sys.path настраивается до импорта parser.
+"""
 
 from __future__ import annotations
 
+import sys
 from collections.abc import AsyncIterator
+from pathlib import Path
 
-import pytest_asyncio
-from sqlalchemy.ext.asyncio import (
+_ROOT = Path(__file__).resolve().parents[1]
+
+# sys.path-вставка до импорта src и tools/hh-agent
+for _p in (_ROOT, _ROOT / "tools" / "hh-agent"):
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
+
+import pytest_asyncio  # noqa: E402
+from sqlalchemy.ext.asyncio import (  # noqa: E402
     AsyncEngine,
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.pool import StaticPool
-from src.db.base import create_all
-from src.db.repositories.all import Repositories
+from sqlalchemy.pool import StaticPool  # noqa: E402
+from src.db.base import create_all  # noqa: E402
+from src.db.repositories.all import Repositories  # noqa: E402
 
 
 @pytest_asyncio.fixture
